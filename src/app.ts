@@ -74,14 +74,13 @@ export const calculateEditDistance = (b: string, a: string, c: number = 0): numb
  * @returns 
  */
 const initializeArray = (nb: number, na: number) => {
-  let dp: number[][] = new Array(nb+1).fill(undefined);
-  dp[0] = new Array(na+1).fill(undefined)
+  let dp: number[][] = [];
+  dp[0] = []
   for(let i = 0; i <= na; ++i){
     dp[0][i] = i;
   }
-  for (let i = 1; i <= nb; i++) {
-    dp[i] = new Array(na+1).fill(undefined)
-    dp[i][0] = i;
+  for(let i = 1; i <= nb; ++i){
+    dp[i] = [i]
   }
   
   return dp;
