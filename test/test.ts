@@ -23,6 +23,9 @@ describe('default behavior', () => {
     expect(calculateEditDistance('non smoker', 'nonsmoker', 2)).toEqual(0)
     expect(calculateEditDistance('this isa text', 'thisis atext', 3)).toEqual(0)
     expect(calculateEditDistance('this isa text', 'thisis atext', 2)).not.toEqual(0)
+    // when the concatenation of words hit the beginning of the input
+    expect(calculateEditDistance('wise', 'unwise', 3)).toEqual(1)
+    expect(calculateEditDistance('unwise', 'wise', 3)).toEqual(1)
   })
 
   it('wordErrorRate with controlled concatenation', () => {
