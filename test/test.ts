@@ -21,6 +21,8 @@ describe('default behavior', () => {
     expect(calculateEditDistance('word', 'word')).toEqual(0)
     expect(calculateEditDistance('non smoker', 'nonsmoker')).toEqual(2)
     expect(calculateEditDistance('non smoker', 'nonsmoker', 2)).toEqual(0)
+    expect(calculateEditDistance('this isa text', 'thisis atext', 3)).toEqual(0)
+    expect(calculateEditDistance('this isa text', 'thisis atext', 2)).not.toEqual(0)
   })
 
   it('wordErrorRate with controlled concatenation', () => {

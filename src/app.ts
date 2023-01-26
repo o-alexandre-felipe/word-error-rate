@@ -7,7 +7,7 @@ function concatenatedMatch(a: string[], b: string[], ai: number, bi: number, lim
   let as = a[ai-1]
   let bs = b[bi-1]
   let aj = ai - 1, bj = bi - 1;
-  let iter = 1
+  let iter = 0
   while(
     // Partial matched
     as.slice(-bs.length) === bs.slice(-as.length) && iter <= limit
@@ -35,7 +35,18 @@ function concatenatedMatch(a: string[], b: string[], ai: number, bi: number, lim
   return [ai, bi]
 }
 
-export const calculateEditDistance = (b: string, a: string, concatenateLimit: number = 1): number => {
+/**
+ * Computes the word error rate, possibly performing concatenations of multiple words
+ * counting e.g. 
+ * error `rate` = `errorrate` with one concatenation
+ * `this isa text` = `thisis atext`, with three concatenations
+ * 
+ * @param b one version of the text
+ * @param a another version of the text
+ * @param c number of concatenations to attempt to match match two versions
+ * @returns 
+ */
+export const calculateEditDistance = (b: string, a: string, c: number = 0): number => {
   const bh = createHashArray(b)
   const ah = createHashArray(a);
   const [nb, na] = [bh.length, ah.length];
@@ -43,12 +54,14 @@ export const calculateEditDistance = (b: string, a: string, concatenateLimit: nu
   for (let ib = 1; ib <= nb; ib++) {
     for (let ia = 1; ia <= na; ia++) {
       dp[ib][ia] = Math.min(
-        dp[ib][ia-1], // delete
-        dp[ib-1][ia], // insert 
-        dp[ib-1][ia-1] // substitute
-      ) + 1
-      const [jb, ja] = concatenatedMatch(bh, ah, ib, ia, concatenateLimit);
-      dp[ib][ia] = Math.min(dp[ib][ia], dp[jb][ja])
+        dp[ib][ia-1] + 1, // delete
+        dp[ib-1][ia] + 1, // insert 
+        dp[ib-1][ia-1] + (bh[ib-1] !== ah[ia-1] ? 1: 0) // substitute
+      )
+      if(c){
+        const [jb, ja] = concatenatedMatch(bh, ah, ib, ia, c);
+        dp[ib][ia] = Math.min(dp[ib][ia], dp[jb][ja])
+      }
     }
   }
   return dp[nb][na]
@@ -74,8 +87,18 @@ const initializeArray = (nb: number, na: number) => {
   return dp;
 }
 
-export const wordErrorRate = (incoming: string, expected: string, concatenateLimit: number=1) => {
-  const editDistance = calculateEditDistance(incoming, expected, concatenateLimit);
+/**
+ * Computes the word error rate, possibly performing concatenations of multiple words
+ * counting e.g. 
+ * error `rate` = `errorrate` with one concatenation
+ * `this isa text` = `thisis atext`, with three concatenations
+ * @param b one version of the text
+ * @param a another version of the text
+ * @param c number of concatenations to attempt to match match two versions
+ * @returns 
+ */
+export const wordErrorRate = (incoming: string, expected: string, c: number=0) => {
+  const editDistance = calculateEditDistance(incoming, expected, c);
   const score = editDistance / Math.max(createHashArray(incoming).length, createHashArray(expected).length);
   return score;
 }
