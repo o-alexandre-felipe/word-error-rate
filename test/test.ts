@@ -1,4 +1,4 @@
-import { calculateEditDistance, wordErrorRate } from "./app";
+import { calculateEditDistance, wordErrorRate } from "../src/app";
 import {describe, expect, it} from '@jest/globals'
 
 describe('default behavior', () => {
@@ -15,5 +15,17 @@ describe('default behavior', () => {
     // calculated with respect to the longer input
     expect(wordErrorRate('i like babies', 'i am like babies')).toEqual(0.25) 
     expect(wordErrorRate('i will not go', 'i will go')).toEqual(0.25) // one deletion
+  })
+
+  it('calculateDistance with controlled concatenation', () => {
+    expect(calculateEditDistance('word', 'word')).toEqual(0)
+    expect(calculateEditDistance('non smoker', 'nonsmoker')).toEqual(2)
+    expect(calculateEditDistance('non smoker', 'nonsmoker', 2)).toEqual(0)
+  })
+
+  it('wordErrorRate with controlled concatenation', () => {
+    expect(calculateEditDistance('word', 'word')).toEqual(0)
+    expect(wordErrorRate('non smoker', 'nonsmoker')).toEqual(1.0)
+    expect(wordErrorRate('non smoker', 'nonsmoker', 2)).toEqual(0)
   })
 })

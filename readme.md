@@ -29,3 +29,6 @@ wordErrorRate("one hen", "won hen"); // => 0.5
 calculateEditDistance("one hen two ducks", "won hen too ducts"); // => 3
 wordErrorRate("one hen two ducks", "won hen too ducts"); // => 0.75
 ```
+
+### Development
+After you `install`, you should be able to run `npm run test` that use `ts-jest` to do a few checks and `npm run build` that generate the javascript files in the dist folder.
