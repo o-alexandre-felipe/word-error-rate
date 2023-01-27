@@ -1,9 +1,10 @@
-import { calculateEditDistance, wordErrorRate } from "../src/app";
+import { alignText, calculateEditDistance, wordErrorRate } from "../src/app";
 import {describe, expect, it} from '@jest/globals'
 
-describe('default behavior', () => {
+describe('plain input', () => {
   it('calculateDistance', () => {
     expect(calculateEditDistance('one hen', 'won hen')).toEqual(1)
+    expect(calculateEditDistance(['one', 'hen'], ['won', 'hen'])).toEqual(1)
     expect(calculateEditDistance('one hen two docks', 'won hen too ducts')).toEqual(3)
     expect(calculateEditDistance('i like babies', 'i am like babies')).toEqual(1) // one insertion
     expect(calculateEditDistance('i will not go', 'i will go')).toEqual(1) // one deletion
@@ -32,5 +33,26 @@ describe('default behavior', () => {
     expect(calculateEditDistance('word', 'word')).toEqual(0)
     expect(wordErrorRate('non smoker', 'nonsmoker')).toEqual(1.0)
     expect(wordErrorRate('non smoker', 'nonsmoker', 2)).toEqual(0)
+  })
+})
+
+describe('Alignement', () => {
+  it('replacement', () => {
+    expect(alignText('one hen', 'won hen')).toEqual([['one', 'won'], ['hen', 'hen']])
+  })
+  it('concatenation', () => {
+    expect(alignText('non smoker', 'nonsmoker', 1)).toEqual([['non smoker', 'nonsmoker']])
+  })
+  it('deletion', () => {
+    expect(alignText('I do want', 'I want')).toEqual([['I', 'I'], ['do', null], ['want', 'want']])
+  })
+  
+  it('insertion', () => {
+    expect(alignText('I want', 'I do want')).toEqual([['I', 'I'], [null, 'do'], ['want', 'want']])
+  })
+
+  it('align prepending', () => {
+    expect(alignText('one hundred', 'hundred')).toEqual([['one', null], ['hundred', 'hundred']])
+    expect(alignText('hundred', 'one hundred')).toEqual([[null, 'one'], ['hundred', 'hundred']])
   })
 })
